@@ -13,6 +13,44 @@ transform: translateY(100vh);
 transition: transform 0.3s;
 }
 
+#create-post form {
+padding: 16px 16px 120px;
+}
+
+#media-section {
+max-width: 480px;
+margin: 0 auto;
+}
+
+#player,
+#canvas {
+display: none;
+width: 100%;
+max-width: 480px;
+margin: 0 auto 8px;
+border-radius: 8px;
+background: #000;
+}
+
+#media-actions {
+margin-bottom: 8px;
+}
+
+#capture-btn,
+#retake-btn,
+#location-loader {
+display: none;
+}
+
+#pick-image {
+display: none;
+margin: 8px auto;
+}
+
+#location-loader {
+vertical-align: middle;
+}
+
 .main-image {
 max-width: 100%;
 margin: auto;

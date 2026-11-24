@@ -10,6 +10,7 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#3f51b5">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="UTEQGram">
   <link rel="apple-touch-icon" href="/src/images/icons/apple-icon-180x180.png" sizes="180x180">
@@ -57,15 +58,38 @@
     <main class="mdl-layout__content mat-typography">
       <div id="create-post">
         <form>
+          <!-- Cámara del dispositivo -->
+          <div id="media-section">
+            <video id="player" autoplay playsinline muted></video>
+            <canvas id="canvas"></canvas>
+            <div id="media-actions">
+              <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" id="capture-btn" type="button">
+                <i class="material-icons">photo_camera</i> Capturar
+              </button>
+              <button class="mdl-button mdl-js-button mdl-button--raised" id="retake-btn" type="button">
+                <i class="material-icons">refresh</i> Otra foto
+              </button>
+            </div>
+            <div id="pick-image">
+              <h6 id="pick-image-label">O elige una imagen</h6>
+              <input type="file" accept="image/*" capture="environment" id="image-picker">
+            </div>
+          </div>
           <div class="input-section mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input" type="text" id="title">
-            <label class="mdl-textfield__label" for="title" name="title">Title</label>
+            <label class="mdl-textfield__label" for="title" name="title">Título</label>
           </div>
           <div class="input-section mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="manual-location">
             <input class="mdl-textfield__input" type="text" id="location">
-            <label class="mdl-textfield__label" for="location" name="location">Location</label>
+            <label class="mdl-textfield__label" for="location" name="location">Ubicación</label>
           </div>
-          <br>
+          <!-- GPS del dispositivo -->
+          <div class="input-section">
+            <button class="mdl-button mdl-js-button mdl-button--colored" id="location-btn" type="button">
+              <i class="material-icons">my_location</i> Usar mi ubicación
+            </button>
+            <div class="mdl-spinner mdl-js-spinner is-active" id="location-loader"></div>
+          </div>
           <div>
             <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored mdl-color--accent"
                     type="submit" id="post-btn">Postear!

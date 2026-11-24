@@ -2,7 +2,7 @@ importScripts('src/js/idb.js');
 importScripts('src/js/utility.js');
 
 
-var CACHE_STATIC_NAME = 'static-v13';
+var CACHE_STATIC_NAME = 'static-v17';
 var CACHE_DYNAMIC_NAME = 'dynamic-v2';
 var STATIC_FILES = [
     '/',
@@ -27,6 +27,7 @@ var STATIC_FILES = [
     '/src/css/material-icons.css',
     '/src/fonts/material-icons.ttf',
     '/src/images/main-image.jpg',
+    '/src/images/main-image-sm.jpg',
     '/src/images/sf-boat.jpg',
 ]
 
@@ -164,12 +165,7 @@ self.addEventListener('sync', function (event) {
                             headers: {
                                 'Content-Type': 'text/plain;charset=UTF-8'
                             },
-                            body: JSON.stringify({
-                                id: dt.id,
-                                title: dt.title,
-                                location: dt.location,
-                                image: 'https://firebasestorage.googleapis.com/v0/b/proyeto-del-curso.firebasestorage.app/o/sf-boat.jpg?alt=media&token=1c264061-7918-4a64-b15e-d14f8d7ed95f'
-                            })
+                            body: JSON.stringify(dt)
                         })
                             .then(function (res) {
                                 if (!res.ok) {
@@ -177,6 +173,9 @@ self.addEventListener('sync', function (event) {
                                 }
                                 console.log('Synced post', dt.id);
                                 return deleteItemFromData('sync-posts', dt.id);
+                            })
+                            .then(function () {
+                                return notifyNewPost(dt);
                             })
                             .catch(function (err) {
                                 console.error('Error while syncing post', dt.id, err);
@@ -186,4 +185,56 @@ self.addEventListener('sync', function (event) {
                 })
         );
     }
+});
+// ---------- Notificaciones push ----------
+
+self.addEventListener('push', function (event) {
+    console.log('[Service Worker] Push recibido', event);
+    var data = { title: 'UTEQGram', content: 'Hay novedades en el feed.', openUrl: '/' };
+    if (event.data) {
+        try {
+            data = Object.assign(data, event.data.json());
+        } catch (e) {
+            data.content = event.data.text();
+        }
+    }
+    event.waitUntil(
+        self.registration.showNotification(data.title, {
+            body: data.content,
+            icon: '/src/images/icons/app-icon-192x192.png',
+            badge: '/src/images/icons/app-icon-144x144.png',
+            vibrate: [100, 50, 200],
+            tag: 'new-post',
+            renotify: true,
+            data: { url: data.openUrl },
+            actions: [
+                { action: 'confirm', title: 'Ver el feed' },
+                { action: 'cancel', title: 'Cerrar' }
+            ]
+        })
+    );
+});
+
+self.addEventListener('notificationclick', function (event) {
+    var notification = event.notification;
+    var url = (notification.data && notification.data.url) || '/';
+    console.log('[Service Worker] Notificación pulsada:', event.action || 'cuerpo');
+    notification.close();
+    if (event.action === 'cancel') {
+        return;
+    }
+    event.waitUntil(
+        self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+            .then(function (clis) {
+                var client = clis.find(function (c) { return c.visibilityState === 'visible'; }) || clis[0];
+                if (client) {
+                    return client.navigate(url).then(function (c) { return (c || client).focus(); });
+                }
+                return self.clients.openWindow(url);
+            })
+    );
+});
+
+self.addEventListener('notificationclose', function (event) {
+    console.log('[Service Worker] Notificación cerrada', event.notification.tag);
 });

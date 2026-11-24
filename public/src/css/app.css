@@ -5,3 +5,13 @@
 .drawer-option {
   padding: 16px;
 }
+
+/* Se muestran solo si el navegador soporta notificaciones (app.js). */
+.enable-notifications {
+  display: none;
+  height: auto;
+  min-height: 36px;
+  line-height: 1.3;
+  padding: 8px 16px;
+  white-space: normal;
+}

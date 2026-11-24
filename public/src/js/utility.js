@@ -47,6 +47,19 @@ function clearAllData(st) {
     );
 }
 
+// Pide a la función serverless /api/notify que envíe un push a los dispositivos suscritos.
+// Se usa desde la página y desde el Service Worker; un fallo no afecta la publicación.
+function notifyNewPost(post) {
+    return fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: post.title, location: post.location })
+    })
+        .then(function(res) { return res.json(); })
+        .then(function(result) { console.log('[Push] Notificación enviada', result); })
+        .catch(function(err) { console.warn('[Push] No se pudo enviar la notificación.', err); });
+}
+
 function deleteItemFromData(st, id) {
     return dbPromise
         .then(function(db) {
