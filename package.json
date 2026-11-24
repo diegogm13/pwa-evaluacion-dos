@@ -1,0 +1,12 @@
+{
+  "name": "proyecto-del-curso",
+  "version": "1.0.0",
+  "description": "App sencillo parecida a instagram",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server public -c-1 -p 8080"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
